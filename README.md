@@ -55,7 +55,7 @@ Create `database-persistent-volume-claim.yaml`
 
 Remember to make sure that, in `postgres-deployment.yaml`, you are setting up a volume using this PVC. You need to both allocate the storage and also update the container section to make sure the container has access to the volume.
 
-### Secrets
+## Secrets
 
 A `Secret` is a different Kubernetes object type. It is used for storing secrets, for example Postgres passwords.
 
@@ -65,10 +65,27 @@ We need to use an imperative command to pass the secret in.
 $ kubectl create secret generic pgpassword --from-literal PGPASSWORD=12345asdf 
 ```
 
-```
-$ kubectl get secrets
-```
+Create `ingress-service.yaml`
 
+## Load balancing
+
+Note: a load balancer service can only load balance one deployment.  Use Ingress instead.
+
+## Ingress
+
+![Ingress Architecture](images/k8s/ingress1.png)
+
+We create a configuration file (an ingress config), which is a set of routing rules.  We feed into kubectl which creates an Ingress **Controller** inside our Node.  The ingress controller’s job is to look at the routing rules and make it a reality.  The ingress controller will have to create some infrastructure inside our cluster to make the rules work.
+
+This is the Nginx Ingress project we're using:
+http://github.com/kubernetes/ingress-nginx
+
+### Setting up Ingress with Docker Desktop:
+
+```
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.45.0/deploy/static/provider/cloud/deploy.yaml
+$ kubectl get pods -n ingress-nginx
+```
 
 ## Commands
 
