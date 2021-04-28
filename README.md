@@ -65,7 +65,6 @@ We need to use an imperative command to pass the secret in.
 $ kubectl create secret generic pgpassword --from-literal PGPASSWORD=12345asdf 
 ```
 
-Create `ingress-service.yaml`
 
 ## Load balancing
 
@@ -86,6 +85,55 @@ http://github.com/kubernetes/ingress-nginx
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.45.0/deploy/static/provider/cloud/deploy.yaml
 $ kubectl get pods -n ingress-nginx
 ```
+
+Create `ingress-service.yaml`
+
+## Kubernetes Dashboard
+
+Go to: https://github.com/kubernetes/dashboard#install
+
+Grab the install command. e.g.:
+```
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml
+```
+
+Copy the url within the command:
+```
+https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml
+```
+
+Download the config file locally:
+```
+$ curl https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml > kubernetes-dashboard.yaml
+```
+
+Find `args` and add the following two lines immediately underneath --auth-generate-certificates:
+
+```
+args:
+            - --auto-generate-certificates
+            - --enable-skip-login
+            - --disable-settings-authorizer
+            - --namespace=kubernetes-dashboard
+```
+
+Apply the config:
+```
+$ kubectl apply -f k8s/kubernetes-dashboard.yaml
+```
+
+Start the server:
+```
+$ kubectl proxy
+```
+
+Visit the dashboard at: http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+
+![Kubernetes Dashboard Login](images/k8s/k8s-dashboard-1.png)
+
+Skip login
+
+![Kubernetes Dashboard Login](images/k8s/k8s-dashboard-2.png)
 
 ## Commands
 
