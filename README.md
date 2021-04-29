@@ -1,3 +1,6 @@
+
+# Local Deployment
+
 ## Node Architecture
 ![Node Architecture](images/k8s/node_architecture.png)
 
@@ -135,7 +138,68 @@ Skip login
 
 ![Kubernetes Dashboard Login](images/k8s/k8s-dashboard-2.png)
 
-## Commands
+# Production Deployment
+
+Connect Github project to Travis
+
+Go to: https://console.cloud.google.com
+
+Create new project
+
+![New Project](images/k8s/gke_new_project1.png)
+
+![New Project](images/k8s/gke_new_project2.png)
+
+![New Project](images/k8s/gke_new_project3.png)
+
+Make sure you have billing enabled
+
+Create a cluster
+
+![Create Cluster](images/k8s/gke_create_cluster1.png)
+
+![Create Cluster](images/k8s/gke_create_cluster2.png)
+
+![Create Cluster](images/k8s/gke_create_cluster3.png)
+
+Create `.travis.yml` file
+
+Note: in order for travis to talk to GKE, we need to create an IAM account on Google.
+
+![Create IAM Service Account](images/k8s/iam_service_account1.png)
+
+![Create IAM Service Account](images/k8s/iam_service_account2.png)
+
+![Create IAM Service Account](images/k8s/iam_service_account3.png)
+
+![Create IAM Service Account](images/k8s/iam_service_account4.png)
+
+![Create IAM Service Account](images/k8s/iam_service_account5.png)
+
+![Create IAM Service Account](images/k8s/iam_service_account6.png)
+
+![Create IAM Service Account](images/k8s/iam_service_account7.png)
+
+![Create IAM Service Account](images/k8s/iam_service_account8.png)
+
+![Create IAM Service Account](images/k8s/iam_service_account9.png)
+
+
+After you download the credentials json file from Google, you need to use the travis CLI to encrypt it. The best way to do this consistently is to use a docker container with the ruby image.
+
+You need to create a Github Personal Token for Travis and use it to log in to Travis with.
+
+```
+$ docker run -it -v $(pwd):/app ruby:2.4 sh
+# gem install travis
+# travis
+# travis login --github-token <github personal token> --com
+# travis encrypt-file service-account.json -r ajuljulian/multi-docker-k8s --com
+# exit
+```
+
+
+# Commands
 
 Get deployments:
 ```
