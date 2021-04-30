@@ -239,6 +239,41 @@ $ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 $ helm install ingress-nginx ingress-nginx/ingress-nginx
 ```
 
+# Setting up https
+
+We'll use LetsEncrypt (https://letsencrypt.org)
+
+### Flow
+1. Kubernetes cluster tells LetsEncrypt that it owns a given domain and asks for a certificate
+1. LetsEncrypt makes a request to that domain and expects a specific reply
+1. LetsEncrypt issues a certificate that's good for 90 days
+
+Point your domain to the IP address exposed by your cluster
+A record -> IP
+www CNAME -> @
+
+We're using the "Cert Manager" project to facilitate getting the cert: https://github.com/jetstack/cert-manager
+
+In order to install Cert Manager, do the following in the GCP Cloud Shell:
+```
+$ kubectl create namespace cert-manager
+$ helm repo add jetstack https://charts.jetstack.io
+$ helm repo update
+$ helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --version v1.2.0 \
+  --create-namespace
+```
+
+It uses two Kubernetes objects configured using config files:
+1. Issuer: object that tells the Cert Manager where to get the certificate from
+1. Certificate: object that describes the certificate details
+
+
+Create `issuer.yaml`
+
+Create `certificate.yaml`
 
 # Commands
 

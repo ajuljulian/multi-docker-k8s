@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kirascafe-com-tls
+spec:
+  secretName: kirascafe-com
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: kirascafe.com
+  dnsNames:
+    - kirascafe.com
+    - www.kirascafe.com
