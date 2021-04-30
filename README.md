@@ -275,6 +275,13 @@ Create `issuer.yaml`
 
 Create `certificate.yaml`
 
+Deploy to GKE.  It should create the new objects.
+
+In GCP Cloud Shell, try to get the certificate
+```
+$ kubectl get certificates
+```
+
 # Commands
 
 Get deployments:
