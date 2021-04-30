@@ -187,7 +187,7 @@ Note: in order for travis to talk to GKE, we need to create an IAM account on Go
 
 After you download the credentials json file from Google, you need to use the travis CLI to encrypt it. The best way to do this consistently is to use a docker container with the ruby image.
 
-You need to create a Github Personal Token for Travis and use it to log in to Travis with.
+Note: you need to create a Github Personal Access Token for TraviNs and use it to log in to Travis with.
 
 ```
 $ docker run -it -v $(pwd):/app ruby:2.4 sh
@@ -196,6 +196,47 @@ $ docker run -it -v $(pwd):/app ruby:2.4 sh
 # travis login --github-token <github personal token> --com
 # travis encrypt-file service-account.json -r ajuljulian/multi-docker-k8s --com
 # exit
+```
+
+IMPORTANT: Once you have encypted the google credentials file (`service-account.json.enc`), **delete** the original unencrypted file (`service-account.json`)
+
+Make sure that you've specified the `DOCKER_USERNAME` and `DOCKER_PASSWORD` environment variables in the Travis settings for the project.
+
+`.travis.yaml` invokes a shell script, `deploy.sh` to handle the deployment of the containers to Docker hub.  We have to deploy two versions, one tagged with the commit SHA so that k8s re-deploys, and another one tagged with `latest` so that people applying the cluster get the latest version.
+
+We also need to run an imperative command to create a secret on the GKE cluster.  For that, we can lever Google's Kubernetes Cloud Shell feature.
+
+![Cloud Shell](images/k8s/gke_cloud_shell1.png)
+
+![Cloud Shell](images/k8s/gke_cloud_shell2.png)
+
+We need to run a bunch of commands in this shell:
+
+```
+$ gcloud config set project multi-docker-k8s-312122
+$ gcloud config set compute/zone us-west1-a
+$ gcloud container clusters get-credentials multi-cluster
+```
+
+```
+$ kubectl create secret generic pgpassword --from-literal PGPASSWORD=some_password
+```
+
+We also need to install nginx kubernetes into our cluster. We can use Helm for that.
+
+https://kubernetes.github.io/ingress-nginx/deploy/#using-helm
+
+In our Google Cloud Console, we need to issue these commands:
+```
+$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+$ chmod 700 get_helm.sh
+./get_helm.sh
+```
+
+Install Ingress-Nginx:
+```
+$ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+$ helm install ingress-nginx ingress-nginx/ingress-nginx
 ```
 
 
