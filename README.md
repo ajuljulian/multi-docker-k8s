@@ -264,6 +264,7 @@ $ helm install \
   --namespace cert-manager \
   --version v1.2.0 \
   --create-namespace
+$ kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.2.0/cert-manager.crds.yaml
 ```
 
 It uses two Kubernetes objects configured using config files:
