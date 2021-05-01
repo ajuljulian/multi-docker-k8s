@@ -282,6 +282,14 @@ In GCP Cloud Shell, try to get the certificate
 $ kubectl get certificates
 ```
 
+uninstalling cert manager:
+
+```
+$ helm --namespace cert-manager delete cert-manager
+$ kubectl delete namespace cert-manager
+$ kubectl delete -f https://github.com/jetstack/cert-manager/releases/download/v1.2.0/cert-manager.crds.yaml
+```
+
 # Commands
 
 Get deployments:
