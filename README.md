@@ -278,9 +278,10 @@ Create `certificate.yaml`
 
 Deploy to GKE.  It should create the new objects.
 
-In GCP Cloud Shell, try to get the certificate
+In GCP Cloud Shell, try to get the certificate and describe them
 ```
 $ kubectl get certificates
+# kubectl describe certificates
 ```
 
 uninstalling cert manager:
@@ -289,6 +290,48 @@ uninstalling cert manager:
 $ helm --namespace cert-manager delete cert-manager
 $ kubectl delete namespace cert-manager
 $ kubectl delete -f https://github.com/jetstack/cert-manager/releases/download/v1.2.0/cert-manager.crds.yaml
+```
+
+# Local Development Using Skaffold
+
+https://skaffold.dev/docs/install/
+
+## Install using homebrew
+
+```
+$ brew install skaffold
+$ skaffold version
+```
+
+Create `skaffold.yaml`
+
+Start (see section about local development and https):
+```
+$ skaffold dev
+```
+
+## Local development and https
+
+Problem: after creating `certificate.yaml` and `issuer.yaml` and updating `ingress-service.yaml` to make https work on Google Cloud, local deployments started failing, including running through skaffold.
+
+I divided the deployment yaml file into 3 directories: `k8s`, `k8s.dev`, and `k8s.prod`.
+I modified `skaffold.yaml` like this:
+```
+deploy:
+  kubectl:
+    manifests:
+      - ./k8s/*
+      - ./k8s.dev/*
+```
+
+As a result, I am able to run locally through skaffold:
+```
+$ skaffold dev
+```
+
+Or directly:
+```
+$ kubectl apply -f k8s -f k8s.dev
 ```
 
 # Commands

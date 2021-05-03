@@ -1,34 +1,39 @@
-apiVersion: skaffold/v1beta2
+apiVersion: skaffold/v2beta12
 kind: Config
+deploy:
+  kubectl:
+    manifests:
+      - ./k8s/*
+      - ./k8s.dev/*
 build:
   local:
     push: false
   artifacts:
-    - image: stephengrider/multi-client
+    - image: ajuljulian/multi-client
       context: client
       docker:
         dockerfile: Dockerfile.dev
       sync:
-        '**/*.js': .
-        '**/*.css': .
-        '**/*.html': .
-    - image: stephengrider/multi-server
-      context: server
-      docker:
-        dockerfile: Dockerfile.dev
-      sync:
-        '**/*.js': .
-    - image: stephengrider/multi-worker
+        manual:
+          - src: "src/**/*.js"
+            dest: .
+          - src: "src/**/*.css"
+            dest: .
+          - src: "src/**/*.html"
+            dest: .
+    - image: ajuljulian/multi-worker
       context: worker
       docker:
         dockerfile: Dockerfile.dev
       sync:
-        '**/*.js': .
-deploy:
-  kubectl:
-    manifests:
-      - k8s/client-deployment.yaml
-      - k8s/server-deployment.yaml
-      - k8s/worker-deployment.yaml
-      - k8s/server-cluster-ip-service.yaml
-      - k8s/client-cluster-ip-service.yaml
+        manual:
+          - src: "*.js"
+            dest: .
+    - image: ajuljulian/multi-server
+      context: server
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        manual:
+          - src: "*.js"
+            dest: .
