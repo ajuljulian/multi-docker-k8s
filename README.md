@@ -40,7 +40,7 @@ In a web browser, navigate to `http://localhost`
 # Development
 
 ## Node Architecture
-![Node Architecture](images/k8s/node_architecture.png)
+![Node Architecture](images/k8s/node-architecture.png)
 
 ## Flow
 
@@ -113,7 +113,7 @@ Note: a load balancer service can only load balance one deployment.  Use Ingress
 
 ## Ingress
 
-![Ingress Architecture](images/k8s/ingress1.png)
+![Ingress Architecture](images/k8s/ingress-1.png)
 
 We create a configuration file (an ingress config), which is a set of routing rules.  We feed into kubectl which creates an Ingress **Controller** inside our Node.  The ingress controller’s job is to look at the routing rules and make it a reality.  The ingress controller will have to create some infrastructure inside our cluster to make the rules work.
 
