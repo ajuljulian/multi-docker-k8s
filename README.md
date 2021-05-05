@@ -1,5 +1,43 @@
 
+# Overview
+
+Example React app using multiple Docker containers and using Kubernetes for orchestration etc.
+
+The system can be deployed locally on docker-desktop, or on Google Kubernetes Engine (among others)
+
+This is based on the following Udemy course: https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/
+
+For storage, we're making use of Postgres and Redis.
+
+## App architecture
+
+![Dev architecture](images/multidocker-dev-arch.png)
+
+1. Nginx
+1. React server
+1. Express server
+1. Worker
+1. Redis
+1. Postgres
+
+## App flow
+
+1. User submits a number
+1. React app sends number to Express server
+1. Express server stores number in Postgres database
+1. Express server puts number in Redis
+1. Worker listens to Redis insert events, calculates the Fibonacci value recursively (slow), and puts it back in Redis
+
 # Local Deployment
+
+```
+$ kubectl apply -f k8s -f k8s.dev
+```
+
+In a web browser, navigate to `http://localhost`
+
+
+# Development
 
 ## Node Architecture
 ![Node Architecture](images/k8s/node_architecture.png)
@@ -7,7 +45,7 @@
 ## Flow
 
 1. Create config files for each service and deployment
-1. Test locally on Docker Kubernetes
+1. Test locally on docker-kubernetes
 1. Create Github/Travis flow to build images and deploy
 1. Deploy app to a cloud provider
 
@@ -82,7 +120,7 @@ We create a configuration file (an ingress config), which is a set of routing ru
 This is the Nginx Ingress project we're using:
 http://github.com/kubernetes/ingress-nginx
 
-### Setting up Ingress with Docker Desktop:
+### Setting up Ingress with docker-desktop:
 
 ```
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.45.0/deploy/static/provider/cloud/deploy.yaml
@@ -138,7 +176,7 @@ Skip login
 
 ![Kubernetes Dashboard Login](images/k8s/k8s-dashboard-2.png)
 
-# Production Deployment
+# Deployment to Google Kubernetes Engine
 
 Connect Github project to Travis
 
@@ -187,7 +225,7 @@ Note: in order for travis to talk to GKE, we need to create an IAM account on Go
 
 After you download the credentials json file from Google, you need to use the travis CLI to encrypt it. The best way to do this consistently is to use a docker container with the ruby image.
 
-Note: you need to create a Github Personal Access Token for TraviNs and use it to log in to Travis with.
+Note: you need to create a Github Personal Access Token for Travis and use it to log in to Travis with.
 
 ```
 $ docker run -it -v $(pwd):/app ruby:2.4 sh
