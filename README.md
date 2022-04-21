@@ -30,7 +30,11 @@ For storage, we're making use of Postgres and Redis.
 
 # Local Deployment
 
+We create everything declaratively except for adding the postgres password to secrets.
+
 ```
+$ kubectl create secret generic pgpassword --from-literal PGPASSWORD=password123
+
 $ kubectl apply -f k8s -f k8s.dev
 ```
 
@@ -412,6 +416,7 @@ $ kubectl logs <pod>
 See storage classes:
 ```
 $ kubectl get storageclass
+$ kubectl describe storageclass
 ```
 
 See persistent volumes:
